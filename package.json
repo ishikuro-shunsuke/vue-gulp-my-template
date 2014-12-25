@@ -5,8 +5,11 @@
   },
   "devDependencies": {
     "apache-server-configs": "^2.7.1",
+    "browserify": "^8.0.1",
+    "coffeeify": "^1.0.0",
     "connect": "^3.0.1",
     "connect-livereload": "^0.5.0",
+    "debowerify": "^1.2.0",
     "del": "^0.1.0",
     "gulp": "^3.6.0",
     "gulp-autoprefixer": "^1.0.1",
@@ -28,12 +31,15 @@
     "gulp-size": "^1.1.0",
     "gulp-uglify": "^1.0.1",
     "gulp-useref": "^1.0.2",
+    "insert-css": "^0.2.0",
     "jshint-stylish": "^1.0.0",
     "lazypipe": "^0.2.1",
     "main-bower-files": "^2.1.0",
     "opn": "^1.0.0",
     "serve-index": "^1.1.4",
     "serve-static": "^1.4.0",
+    "vinyl-source-stream": "^1.0.0",
+    "vueify": "^1.1.0",
     "wiredep": "^2.0.0"
   }
 }

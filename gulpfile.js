@@ -4,6 +4,9 @@
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
+
 gulp.task('views', function () {
   return gulp.src('app/*.jade')
     .pipe($.jade({pretty: true}))
@@ -22,10 +25,15 @@ gulp.task('styles', function () {
 });
 
 gulp.task('scripts', function () {
-  return gulp.src('app/scripts/**/*.coffee')
-    .pipe($.coffee())
+  return browserify({entries: ['./app/scripts/main.coffee'],
+                     extensions: ['.coffee', '.js']})
+    .transform('coffeeify')
+    .transform('debowerify')
+    .transform('vueify')
+    .bundle()
+    .pipe(source('main.js'))
     .pipe(gulp.dest('.tmp/scripts'))
-})
+});
 
 gulp.task('jshint', function () {
   return gulp.src('app/scripts/**/*.js')
@@ -126,16 +134,18 @@ gulp.task('watch', ['connect'], function () {
     '.tmp/styles/**/*.css',
     'app/scripts/**/*.js',
     '.tmp/scripts/**/*.js',
-    'app/images/**/*'
+    'app/images/**/*',
+    'app/components/*.vue'
   ]).on('change', $.livereload.changed);
 
   gulp.watch('app/**/*.jade', ['views']);
   gulp.watch('app/styles/**/*.scss', ['styles']);
-  gulp.watch('app/scripts/**/*.coffee', ['scritps']);
+  gulp.watch(['app/scripts/**/*.coffee', 'app/components/**/*.vue'],
+             ['scritps']);
   gulp.watch('bower.json', ['wiredep', 'fonts']);
 });
 
-gulp.task('build', ['jshint', 'html', 'images', 'fonts', 'extras'], function () {
+gulp.task('build', ['jsint', 'html', 'images', 'fonts', 'extras'], function () {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });
 
