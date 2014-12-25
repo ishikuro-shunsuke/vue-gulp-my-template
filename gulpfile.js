@@ -4,6 +4,12 @@
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 
+gulp.task('views', function () {
+  return gulp.src('app/*.jade')
+    .pipe($.jade({pretty: true}))
+    .pipe(gulp.dest('.tmp'));
+});
+
 gulp.task('styles', function () {
   return gulp.src('app/styles/main.scss')
     .pipe($.plumber())
@@ -22,14 +28,14 @@ gulp.task('jshint', function () {
     .pipe($.jshint.reporter('fail'));
 });
 
-gulp.task('html', ['styles'], function () {
+gulp.task('html', ['views', 'styles'], function () {
   var lazypipe = require('lazypipe');
   var cssChannel = lazypipe()
     .pipe($.csso)
     .pipe($.replace, 'bower_components/bootstrap-sass-official/assets/fonts/bootstrap','fonts');
   var assets = $.useref.assets({searchPath: '{.tmp,app}'});
 
-  return gulp.src('app/*.html')
+  return gulp.src(['app/*.html', '.tmp/*.html'])
     .pipe(assets)
     .pipe($.if('*.js', $.uglify()))
     .pipe($.if('*.css', cssChannel()))
@@ -59,6 +65,7 @@ gulp.task('extras', function () {
   return gulp.src([
     'app/*.*',
     '!app/*.html',
+    '!app/*.jade',
     'node_modules/apache-server-configs/dist/.htaccess'
   ], {
     dot: true
@@ -67,7 +74,7 @@ gulp.task('extras', function () {
 
 gulp.task('clean', require('del').bind(null, ['.tmp', 'dist']));
 
-gulp.task('connect', ['styles'], function () {
+gulp.task('connect', ['views', 'styles'], function () {
   var serveStatic = require('serve-static');
   var serveIndex = require('serve-index');
   var app = require('connect')()
@@ -98,7 +105,7 @@ gulp.task('wiredep', function () {
     .pipe(wiredep())
     .pipe(gulp.dest('app/styles'));
 
-  gulp.src('app/*.html')
+  gulp.src('app/layouts/*.jade')
     .pipe(wiredep({exclude: ['bootstrap-sass-official']}))
     .pipe(gulp.dest('app'));
 });
@@ -109,11 +116,13 @@ gulp.task('watch', ['connect'], function () {
   // watch for changes
   gulp.watch([
     'app/*.html',
+    '.tmp/*.html',
     '.tmp/styles/**/*.css',
     'app/scripts/**/*.js',
     'app/images/**/*'
   ]).on('change', $.livereload.changed);
 
+  gulp.watch('app/**/*.scss', ['views']);
   gulp.watch('app/styles/**/*.scss', ['styles']);
   gulp.watch('bower.json', ['wiredep']);
 });
