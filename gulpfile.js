@@ -26,10 +26,10 @@ gulp.task('styles', function () {
 
 gulp.task('scripts', function () {
   return browserify({entries: ['./app/scripts/main.coffee'],
-                     extensions: ['.coffee', '.js']})
+                     extensions: ['.coffee', '.js', '.vue']})
     .transform('coffeeify')
-    .transform('debowerify')
     .transform('vueify')
+    .transform('debowerify')
     .bundle()
     .pipe(source('main.js'))
     .pipe(gulp.dest('.tmp/scripts'))
@@ -141,7 +141,7 @@ gulp.task('watch', ['connect'], function () {
   gulp.watch('app/**/*.jade', ['views']);
   gulp.watch('app/styles/**/*.scss', ['styles']);
   gulp.watch(['app/scripts/**/*.coffee', 'app/components/**/*.vue'],
-             ['scritps']);
+             ['scripts']);
   gulp.watch('bower.json', ['wiredep', 'fonts']);
 });
 
