@@ -10,7 +10,7 @@
       a(href='#') About
     li
       a(href='#') Contact
-  h3.text-muted anyclicker standalone
+  h3.text-muted vue gulp my template
 </template>
 
 <script>
